@@ -520,13 +520,13 @@ jpeg_parse_exif (JpegExifContext *context, j_decompress_ptr cinfo)
 			jpeg_parse_exif_app1 (context, cmarker);
 		else if (cmarker->marker == JPEG_APP0+2)
 			jpeg_parse_exif_app2_segment (context, cmarker);
-
 		cmarker = cmarker->next;
 	}
 }
 
 static gchar*
-jpeg_get_comment ( j_decompress_ptr cinfo ) {
+jpeg_get_comment (j_decompress_ptr cinfo)
+{
 	jpeg_saved_marker_ptr cmarker;
 	for ( cmarker = cinfo->marker_list;
 	      cmarker != NULL;
@@ -563,6 +563,7 @@ gdk_pixbuf__jpeg_image_load (FILE *f, GError **error)
 	struct error_handler_data jerr;
 	stdio_src_ptr src;
 	gchar *icc_profile_base64;
+	gchar* comment;
 	JpegExifContext exif_context = { 0, };
 
 	/* setup error handler */
@@ -633,7 +634,7 @@ gdk_pixbuf__jpeg_image_load (FILE *f, GError **error)
 		goto out; 
 	}
 
-	gchar* comment = jpeg_get_comment( &cinfo );
+	comment = jpeg_get_comment (&cinfo);
 	if ( comment != NULL ) {
 		gdk_pixbuf_set_option (pixbuf, "comment", comment);
 		g_free(comment);
@@ -1047,6 +1048,7 @@ gdk_pixbuf__jpeg_image_load_increment (gpointer data,
 		/* try to load jpeg header */
 		if (!context->got_header) {
 			int rc;
+			gchar* comment;
 		
 			jpeg_save_markers (cinfo, JPEG_APP0+1, 0xffff);
 			jpeg_save_markers (cinfo, JPEG_APP0+2, 0xffff);
@@ -1061,7 +1063,7 @@ gdk_pixbuf__jpeg_image_load_increment (gpointer data,
 
 			/* parse exif data */
 			jpeg_parse_exif (&exif_context, cinfo);
-
+		
 			width = cinfo->image_width;
 			height = cinfo->image_height;
 			if (context->size_func) {
@@ -1101,7 +1103,7 @@ gdk_pixbuf__jpeg_image_load_increment (gpointer data,
 				goto out;
 			}
 
-			gchar* comment = jpeg_get_comment( cinfo );
+			comment = jpeg_get_comment (cinfo);
 			if ( comment != NULL ) {
 				gdk_pixbuf_set_option (context->pixbuf, "comment", comment);
 				g_free(comment);

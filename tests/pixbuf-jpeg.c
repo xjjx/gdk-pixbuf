@@ -108,7 +108,7 @@ test_comment(void)
       return;
     }
 
-  ref = gdk_pixbuf_new_from_file (g_test_get_filename (G_TEST_DIST, "bug725582-testrotate.jpg", NULL), &error);
+  ref = gdk_pixbuf_new_from_file (g_test_get_filename (G_TEST_DIST, "bug143608-comment.jpg", NULL), &error);
   g_assert_no_error (error);
 
   g_assert_cmpstr (gdk_pixbuf_get_option (ref, "comment"), ==, "COMMENT HERE");
